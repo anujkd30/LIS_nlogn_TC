@@ -6,10 +6,9 @@ int ceilSearch(vector<int> arr,vector<int> aux,int n,int first,int last,int ele)
 
     int left = first;   //Left index I
     int right = last;   //Right index
-    //cout<<first<<" "<<last<<" "<<ele<<endl;
+   
     //If ele is less than the leftmost element than next greater element is the arr[left]
     if(ele < arr[aux[left]]){
-        //cout<<ele<<" is less than "<<arr[aux[left]]<<endl;
         return left;
     }
 
@@ -23,21 +22,19 @@ int ceilSearch(vector<int> arr,vector<int> aux,int n,int first,int last,int ele)
         //Mid of the array
         int mid = left+(right-left)/2;
 
-        //if arr[mid] is greater than ele than next greater element is either arr[mid]
+        //if arr[aux[mid]] is greater than ele than next greater element is either arr[mid]
         //or present in the left subarray
         if(ele < arr[aux[mid]]){
             if(mid-1>=left && arr[aux[mid-1]]<ele){
-                //cout<<ele<<" is less than "<<arr[aux[mid]]<<endl;
                 return mid;
             }
             else
                 right = mid-1;
         }
-        //if arr[mid] is less than ele than next greater element is either arr[mid]
+        //if arr[aux[mid]] is less than ele than next greater element is either arr[mid]
         //or present in the right subarray
         else{
             if(mid+1<=right && arr[aux[mid+1]]>ele){
-                //cout<<ele<<" is less than "<<arr[aux[mid+1]]<<endl;
                 return mid+1;
             }
             else
@@ -48,23 +45,26 @@ int ceilSearch(vector<int> arr,vector<int> aux,int n,int first,int last,int ele)
 
 int computeLIS(vector<int> arr,int n){
     int lisLen = 1;
-    vector<int> res(n,-1);
-    vector<int> aux;
+    vector<int> res(n,-1); //Res stores the indexes of the resultant LIS
+    vector<int> aux;    //Aux stores the last index for the Subsequence of length i
 
-    aux.push_back(0);
+    aux.push_back(0);   //Push the first element
 
     for(int i=1;i<n;i++){
-        int ind = ceilSearch(arr,aux,aux.size(),0,aux.size()-1,arr[i]);
-        //cout<<ind<<endl;
+        //get the upper bound for element arr[i] from aux array
+        int ind = ceilSearch(arr,aux,aux.size(),0,aux.size()-1,arr[i]); 
+        
+        //if no upper bound found
         if(ind == -1){
+            //Update the res array 
             res[i] = aux[aux.size()-1];
-            //cout<<ind<<" no  "<<res[i]<<endl;
+            //insert new index and increase the length
             aux.push_back(i);
             lisLen++;
         }
         else{
+            //Update the aux array as new element is found for same index in aux array
             aux[ind] = i;
-            //cout<<ind<<" "<<aux[ind]<<" yes "<<aux[ind-1]<<endl;
             if(ind!=0)
             res[i] = aux[ind-1];
         }
@@ -77,7 +77,6 @@ int computeLIS(vector<int> arr,int n){
     cout<<endl;
     return lisLen;
 }
-using namespace std;
 int main(){
     //n is the size of the input array
     int n;
